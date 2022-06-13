@@ -5,7 +5,11 @@
       :class="{ active: shouldShowDropdown }"
       ref="select"
     >
-      <div class="select-title" @click="TOGGLE_DROPDOWN">
+      <div
+        class="select-title"
+        @click="TOGGLE_DROPDOWN"
+        v-click-outside="TOGGLE_DROPDOWN"
+      >
         <input
           class="search-province"
           type="text"
@@ -44,11 +48,9 @@ export default {
   },
   methods: {
     ...mapMutations(["CLOSE_DROPDOWN", "TOGGLE_DROPDOWN"]),
-  },
-  mounted() {
-    window.addEventListener("click", (e) => {
-      if (e.target.contains(this.$refs.select)) this.CLOSE_DROPDOWN();
-    });
+    sayHi() {
+      console.log("click outside");
+    },
   },
 };
 </script>
