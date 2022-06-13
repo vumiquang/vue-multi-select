@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import { removeVietnameseTones } from "../utils/convertVN";
 
 Vue.use(Vuex);
 
@@ -8,10 +9,19 @@ export default new Vuex.Store({
     provinces: {},
     provincesSelected: { data: [] },
     iShowDropdown: false,
+    searchProvince: "",
   },
   getters: {
     getProvinces(state) {
-      return state.provinces;
+      let filterProvince = {};
+      for (const key in state.provinces) {
+        const p = removeVietnameseTones(state.provinces[key]).toLowerCase();
+
+        if (p.includes(state.searchProvince)) {
+          filterProvince[key] = state.provinces[key];
+        }
+      }
+      return filterProvince;
     },
     getProvincesSelected(state) {
       return state.provincesSelected.data;
@@ -28,6 +38,9 @@ export default new Vuex.Store({
     },
     shouldShowDropdown(state) {
       return state.iShowDropdown;
+    },
+    getSearchProvince(state) {
+      return state.searchProvince;
     },
   },
   mutations: {
@@ -48,6 +61,9 @@ export default new Vuex.Store({
     CLOSE_DROPDOWN(state) {
       state.iShowDropdown = false;
     },
+    SET_SEARCH_PROVINCE(state, value) {
+      state.searchProvince = removeVietnameseTones(value).toLowerCase();
+    },
   },
   actions: {
     getProvincesAPI({ commit }) {
@@ -64,5 +80,9 @@ export default new Vuex.Store({
           commit("SET_PROVINCE_FROM_API", data);
         });
     },
+    setSearchProvince({ commit }, value) {
+      commit("SET_SEARCH_PROVINCE", value);
+    },
   },
 });
+

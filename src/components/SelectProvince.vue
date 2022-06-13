@@ -5,7 +5,14 @@
       :class="{ active: shouldShowDropdown }"
       ref="select"
     >
-      <div class="select-title" @click="TOGGLE_DROPDOWN">Chọn tỉnh thành</div>
+      <div class="select-title" @click="TOGGLE_DROPDOWN">
+        <input
+          class="search-province"
+          type="text"
+          placeholder="Chọn thành phố"
+          v-model="searchProvince"
+        />
+      </div>
       <DropdownProvince v-show="shouldShowDropdown"></DropdownProvince>
     </div>
     <ProvinceResult v-show="provincesSelected.data.length > 0"></ProvinceResult>
@@ -25,7 +32,15 @@ export default {
   },
   computed: {
     ...mapState(["provincesSelected"]),
-    ...mapGetters(["shouldShowDropdown"]),
+    ...mapGetters(["shouldShowDropdown", "getSearchProvince"]),
+    searchProvince: {
+      get() {
+        return this.$store.getters.getSearchProvince;
+      },
+      set(value) {
+        this.$store.dispatch("setSearchProvince", value);
+      },
+    },
   },
   methods: {
     ...mapMutations(["CLOSE_DROPDOWN", "TOGGLE_DROPDOWN"]),
@@ -56,7 +71,7 @@ export default {
   color: #999999;
   cursor: pointer;
   position: relative;
-  padding: 16px 10px;
+  padding: 1px;
 }
 .select-title:after {
   content: "";
@@ -69,5 +84,17 @@ export default {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-top: 4px solid #666666;
+}
+.search-province {
+  width: 100%;
+  padding: 16px 10px;
+  outline: none;
+  border: 0;
+}
+.search-province ::placeholder {
+  font-family: "Noto Sans", sans-serif;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 400px;
 }
 </style>
