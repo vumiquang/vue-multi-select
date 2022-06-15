@@ -3,33 +3,36 @@
     <span class="checkbox-wrap">
       <input
         type="checkbox"
-        v-model="provincesSelected.data"
-        :value="codeProvince"
+        :checked="isDataSelected(value)"
+        :value="value"
+        @input="toggleCheckBox(value)"
       />
       <span class="checkmark"></span>
     </span>
-    <span class="label">{{ province }}</span>
+    <span class="label">{{ value }}</span>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
 export default {
   props: {
-    province: {
+    value: {
       type: String,
-      required: true,
+      default: () => "",
     },
-    codeProvince: {
-      type: String,
-      required: true,
+    isDataSelected: {
+      type: Function,
+      default: () => () => {},
     },
-  },
-  computed: {
-    ...mapState(["provincesSelected"]),
+    toggleListSelected: {
+      type: Function,
+      default: () => () => {},
+    },
   },
   methods: {
-    ...mapMutations(["ADD_PROVINCE_SELECTED"]),
+    toggleCheckBox(value) {
+      this.toggleListSelected(value);
+    },
   },
 };
 </script>

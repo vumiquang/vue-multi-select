@@ -1,17 +1,38 @@
 <template>
   <div class="wrap">
-    <SelectProvince></SelectProvince>
+    <MultiSelect
+      :listData="provinces"
+      @select="doSomeThing"
+      :placeholder="'Chọn tỉnh thành'"
+    ></MultiSelect>
   </div>
 </template>
 
 <script>
-import SelectProvince from "./components/SelectProvince.vue";
+import Vue from "vue";
+import MultiSelect from "./components/MultiSelect/MultiSelect.vue";
 export default {
+  data() {
+    return { provinces: [] };
+  },
   components: {
-    SelectProvince,
+    MultiSelect,
+  },
+  methods: {
+    doSomeThing(data) {
+      console.log(data);
+    },
   },
   created() {
-    this.$store.dispatch("getProvincesAPI");
+    Vue.axios
+      .get("https://provinces.open-api.vn/api/?depth=2")
+      .then((response) => {
+        let data = [];
+        response.data.forEach((province) => {
+          data.push(province.name.replace(/(Tỉnh )|(Thành phố )/i, ""));
+        });
+        this.provinces = data;
+      });
   },
 };
 </script>

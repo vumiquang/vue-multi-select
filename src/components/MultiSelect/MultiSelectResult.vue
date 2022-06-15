@@ -7,7 +7,7 @@
     >
       <span class="tag-name">{{ Object.values(tag)[0] }}</span>
       <img
-        src="../assets/delete.png"
+        src="../../assets/delete.png"
         class="tag-delete"
         @click="$store.commit('REMOVE_PROVINCE_SELECTED', Object.keys(tag)[0])"
       />

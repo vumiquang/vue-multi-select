@@ -2,7 +2,6 @@ import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import App from "./App.vue";
-import store from "./store";
 import "./assets/global.css";
 
 Vue.config.productionTip = false;
@@ -25,6 +24,5 @@ Vue.directive("click-outside", {
 });
 
 new Vue({
-  store,
   render: (h) => h(App),
 }).$mount("#app");
