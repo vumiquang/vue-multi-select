@@ -2,25 +2,34 @@
   <div class="province-result">
     <div
       class="province-tag"
-      v-for="(tag, index) in getTagSelected"
+      v-for="(data, index) in listSelected"
       :key="index"
     >
-      <span class="tag-name">{{ Object.values(tag)[0] }}</span>
+      <span class="tag-name">{{ data }}</span>
       <img
         src="../../assets/delete.png"
         class="tag-delete"
-        @click="$store.commit('REMOVE_PROVINCE_SELECTED', Object.keys(tag)[0])"
+        @click="removeListSelected(data)"
       />
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-// console.log( "" );
 export default {
-  computed: {
-    ...mapGetters(["getTagSelected"]),
+  props: {
+    listSelected: {
+      type: Array,
+      default: () => [],
+    },
+    isListSelectedEmpty: {
+      type: Boolean,
+      default: () => false,
+    },
+    removeListSelected: {
+      type: Function,
+      default: () => () => {},
+    },
   },
 };
 </script>

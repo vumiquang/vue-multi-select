@@ -2,8 +2,8 @@
   <div class="wrap">
     <MultiSelect
       :listData="provinces"
-      @select="doSomeThing"
       :placeholder="'Chọn tỉnh thành'"
+      :onSelect="doSomeThing"
     ></MultiSelect>
   </div>
 </template>
@@ -43,6 +43,6 @@ export default {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 50px;
+  padding-top: 50px;
 }
 </style>

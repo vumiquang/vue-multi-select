@@ -1,37 +1,51 @@
 <template>
   <div class="select">
-    <div class="select-group" :class="{ active: iShowDropdown }" ref="select">
-      <div
-        class="select-title"
-        @click="toggleDropDown"
-        v-click-outside="toggleDropDown"
-      >
+    <div
+      v-click-outside="closeDropdown"
+      class="select-group"
+      :class="{ active: iShowDropdown }"
+    >
+      <div class="select-title" @click="toggleDropdown">
         <input
-          class="search-province"
           type="text"
+          class="search-province"
           :placeholder="placeholder"
-          v-model="searchText"
+          @input="setSearchText($event)"
+          ref="input"
         />
       </div>
       <Dropdown
         v-show="iShowDropdown"
-        :listData="listData"
         @resetSelect="listSelected = []"
         @closeDropdown="closeDropdown"
+        :listData="filterData"
         :toggleListSelected="toggleListSelected"
         :isDataSelected="isDataSelected"
         :isListSelectedEmpty="isListSelectedEmpty"
       ></Dropdown>
     </div>
-    <!-- <MultiSelectResult v-show="listData.length > 0"></MultiSelectResult> -->
+    <MultiSelectResult
+      v-show="!isListSelectedEmpty"
+      :listSelected="listSelected"
+      :removeListSelected="removeListSelected"
+    ></MultiSelectResult>
   </div>
 </template>
 
 <script>
 import Dropdown from "./Dropdown/Dropdown.vue";
-// import MultiSelectResult from "./MultiSelectResult.vue";
+import MultiSelectResult from "./MultiSelectResult.vue";
+import { removeVietnameseTones } from "../../utils/convertVN";
 
 export default {
+  data() {
+    return {
+      listSelected: [],
+      iShowDropdown: false,
+      searchText: "",
+      searchTimeOut: null,
+    };
+  },
   props: {
     listData: {
       type: Array,
@@ -41,39 +55,62 @@ export default {
       type: String,
       default: () => "",
     },
+    onSelect: {
+      type: Function,
+      default: () => () => {},
+    },
   },
-  data() {
-    return {
-      listSelected: [],
-      iShowDropdown: false,
-      searchText: "",
-    };
-  },
+
   components: {
     Dropdown,
-    // MultiSelectResult,
+    MultiSelectResult,
   },
   computed: {
     isListSelectedEmpty() {
       return this.listSelected.length === 0;
     },
+    filterData() {
+      const value = removeVietnameseTones(this.searchText).toLowerCase();
+      return this.listData.filter((data) =>
+        removeVietnameseTones(data).toLowerCase().includes(value)
+      );
+    },
   },
   methods: {
-    toggleDropDown() {
+    toggleDropdown() {
+      if (this.iShowDropdown) {
+        this.$refs.input.blur();
+      }
       this.iShowDropdown = !this.iShowDropdown;
     },
+    openDropdown() {
+      this.iShowDropdown = true;
+    },
     closeDropdown() {
-      console.log("close");
       this.iShowDropdown = false;
     },
     toggleListSelected(value) {
-      console.log(this.listSelected.indexOf(value) > -1);
       if (this.listSelected.indexOf(value) > -1)
         this.listSelected = this.listSelected.filter((data) => data !== value);
       else this.listSelected.push(value);
     },
     isDataSelected(value) {
       return this.listSelected.indexOf(value) > -1;
+    },
+    removeListSelected(value) {
+      this.listSelected = this.listSelected.filter((data) => data !== value);
+    },
+    setSearchText(event) {
+      if (this.searchTimeOut) clearTimeout(this.searchTimeOut);
+
+      this.searchTimeOut = setTimeout(() => {
+        this.searchText = event.target.value;
+      }, 500);
+    },
+  },
+  watch: {
+    listSelected: function (data) {
+      this.onSelect(data);
     },
   },
 };
